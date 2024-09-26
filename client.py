@@ -1,15 +1,19 @@
-# this is the client
+#client
 import socket
 path="/tmp/server.sock"
 
-host = "127.0.0.1"
-port = 5006
 with socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET) as s:
     s.connect(path)
+    print("Client connected.")
     
-    #give command to server.
-    commandstr=input("possible commands: latlong, time, returnstate, ping\n")
-    command = commandstr.encode('utf-8')
-    s.send(command)
-    data=s.recv(1024)
-    print(data)
+    commandstr=input("Possible commands: latlong, time, returnstate, ping\n")
+    while commandstr:
+        command = commandstr.encode('utf-8')
+        s.send(command)
+        data=s.recv(1024)
+        print(data.decode('utf-8'))
+        commandstr=input("possible commands: latlong, time, returnstate, ping\n")
+        
+print("Client disconnected.")
+    
+        

@@ -2,30 +2,44 @@
 import os
 import socket
 
-host = "127.0.0.1"
-port = 5006
 path="/tmp/server.sock"
 
-with socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET) as s:
-    s.bind(path)
-    
-    print(f"Starting server on {host}, port{port}")
-    s.listen()
-    conn, addr = s.accept()
-    with conn:
-        command=conn.recv(1024) #buffsize 1024 bytes
-        data=0
-        if command == b"time":
-            data=b"12:45 am Friday August 23 2024"
-        elif command == b"latlong":
-            data=b"(53.518291, -113.536530)"
-        elif command == b"returnstate":
-            data=b"return state on"
-        elif command == b"ping": 
-            data=b"ping successful"
-        else:
-            data=b"not a valid command"
-        conn.send(data)
-        conn.close()
+if os.path.exists(path):
+    os.remove(path)
 
-os.remove(path)
+with socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET) as s:
+        s.bind(path)
+        
+        print(f"Starting server on {path}\nWaiting for client.")
+        
+        s.listen()
+        while True:
+                conn, addr = s.accept()
+                with conn:
+                        print("Client connected.")
+                        while True:
+                                command=conn.recv(1024) #buffsize 1024 bytes
+                                command=command.decode("utf-8")
+                                data=0
+                                if not command:
+                                        print("Closing connection.")
+                                        break                                        
+                                if command == "time":
+                                        data=b"12:45 am Friday August 23 2024"
+                                elif command == "latlong":
+                                        data=b"(53.518291, -113.536530)"
+                                elif command == "returnstate":
+                                        data=b"return state on"
+                                elif command == "ping": 
+                                        data=b"ping successful"
+                                else:
+                                        command="invalid command"
+                                        data=b"not a valid command"
+                                
+                                print(f"Command recieved: {command}.")        
+                                conn.send(data)
+                                
+                        print("Client disconnected.")
+                break
+        os.remove(path)
+        print("Server socket file removed.")
