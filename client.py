@@ -1,4 +1,4 @@
-#client
+# this is the client
 import socket
 path="/tmp/server.sock"
 
