@@ -4,7 +4,7 @@ This sub System communicates with binary strings using SOCK_SEQPACKET and AF_UNI
 This server recieves incoming commands from the client and echoes back the requested
 information.
 
-At the moment, the three commands are:
+At the moment, the three commands are: 
     - time          - Request the time and date
     - latlong       - Request the latitude and longitude information
     - returnstate   - Request the return state (on/off)
@@ -22,38 +22,42 @@ if os.path.exists(path):
     os.remove(path)
 
 with socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET) as s:
-        s.bind(path)
+    s.bind(path)
         
+    while True:
         print(f"Starting server on {path}\nWaiting for client.")
-        
         s.listen()
-        while True:
-                conn, addr = s.accept()
-                with conn:
-                        print("Client connected.")
-                        while True:
-                                command=conn.recv(1024) #buffsize 1024 bytes
-                                command=command.decode("utf-8")
-                                data=0
-                                if not command:
-                                        print("Closing connection.")
-                                        break                                        
-                                if command == "time":
-                                        data=b"12:45 am Friday August 23 2024"
-                                elif command == "latlong":
-                                        data=b"(53.518291, -113.536530)"
-                                elif command == "returnstate":
-                                        data=b"return state on"
-                                elif command == "ping": 
-                                        data=b"ping successful"
-                                else:
-                                        command="invalid command"
-                                        data=b"not a valid command"
-                                
-                                print(f"Command recieved: {command}.")        
-                                conn.send(data)
-                                
-                        print("Client disconnected.")
-                break
-        os.remove(path)
-        print("Server socket file removed.")
+        conn, addr = s.accept()
+        with conn:
+            print("Client connected.")
+            while True:
+                command=conn.recv(1024) #buffsize 1024 bytes
+                command=command.decode("utf-8")
+                data=0      
+                if command == "time":
+                    data=b"[Server] 12:45 am Friday August 23 2024"
+                elif command == "latlong":
+                    data=b"[Server] 53.518291, -113.536530)"
+                elif command == "returnstate":
+                    data=b"return state on"
+                elif command == "ping": 
+                    data=b"[Server] ping successful"
+                elif command == "terminate":
+                    print("Closing connection.")
+                    os.remove(path)
+                    print("Server socket file removed.")
+                    exit(0)
+                elif command == "disconnect":
+                    print(f"Command recieved: {command}.")  
+                    print("Client disconnected.")      
+                    break
+                else:
+                    command="invalid command"
+                    data=b"[Server] Invalid command."
+                
+                print(f"Command recieved: {command}.")        
+                conn.send(data)
+
+            
+    os.remove(path)
+    print("Server socket file removed.")
