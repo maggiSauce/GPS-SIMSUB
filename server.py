@@ -1,4 +1,18 @@
-#server
+""" This Python program represents the server for a simulation of GPS communication.
+
+This sub System communicates with binary strings using SOCK_SEQPACKET and AF_UNIX. 
+This server recieves incoming commands from the client and echoes back the requested
+information.
+
+At the moment, the three commands are:
+    - time          - Request the time and date
+    - latlong       - Request the latitude and longitude information
+    - returnstate   - Request the return state (on/off)
+    - ping          - Ping the server
+    
+To test the server/client you must run both files in WSL to ensure the use of a 
+UNIX environment. Afterwards you may enter any of the valid commands from the client.
+"""
 import os
 import socket
 
