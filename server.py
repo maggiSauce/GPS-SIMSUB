@@ -4,7 +4,7 @@ This sub System communicates with binary strings using SOCK_SEQPACKET and AF_UNI
 This server recieves incoming commands from the client and echoes back the requested
 information.
 
-At the moment, the three commands are:
+At the moment, the three commands are: 
     - time          - Request the time and date
     - latlong       - Request the latitude and longitude information
     - returnstate   - Request the return state (on/off)
