@@ -24,9 +24,8 @@ if os.path.exists(path):
 with socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET) as s:
     s.bind(path)
         
-    print(f"Starting server on {path}\nWaiting for client.")
-        
     while True:
+        print(f"Starting server on {path}\nWaiting for client.")
         s.listen()
         conn, addr = s.accept()
         with conn:
@@ -45,8 +44,12 @@ with socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET) as s:
                     data=b"[Server] ping successful"
                 elif command == "terminate":
                     print("Closing connection.")
-                    break
+                    os.remove(path)
+                    print("Server socket file removed.")
+                    exit(0)
                 elif command == "disconnect":
+                    print(f"Command recieved: {command}.")  
+                    print("Client disconnected.")      
                     break
                 else:
                     command="invalid command"
@@ -55,6 +58,6 @@ with socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET) as s:
                 print(f"Command recieved: {command}.")        
                 conn.send(data)
 
-            print("Client disconnected.")
+            
     os.remove(path)
     print("Server socket file removed.")
