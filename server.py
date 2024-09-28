@@ -26,7 +26,6 @@ with socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET) as s:
         
     print(f"Starting server on {path}\nWaiting for client.")
         
-    # s.listen()
     while True:
         s.listen()
         conn, addr = s.accept()
@@ -36,8 +35,6 @@ with socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET) as s:
                 command=conn.recv(1024) #buffsize 1024 bytes
                 command=command.decode("utf-8")
                 data=0      
-                # if not command:
-                #     data = b"[Server] Invalid command"         
                 if command == "time":
                     data=b"[Server] 12:45 am Friday August 23 2024"
                 elif command == "latlong":
@@ -50,7 +47,6 @@ with socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET) as s:
                     print("Closing connection.")
                     break
                 elif command == "disconnect":
-                    s.detach()
                     break
                 else:
                     command="invalid command"
